@@ -20,14 +20,22 @@ hideElement(preloader);
 export let page = 1;
 export let limit = 15;
 let totalPages = Number;
-let input = '';
+export let input = '';
+window.onload = handleLoad;
+
 form.addEventListener('submit', handleSendForm);
-nextPageBtn.addEventListener('click', handleNextPage)
+nextPageBtn.addEventListener('click', handleNextPage);
+
 async function handleSendForm(evt) {
     evt.preventDefault();
     listOfPhotos.innerHTML = "";
+    showElement(preloader);
     const newInput = evt.target.elements.search.value.trim();
-    if (newInput === '') {
+    if (newInput !== '' && newInput !== input) {
+        page = 1;
+        input = newInput;
+        await handleSubmit();
+    } else  {
         return iziToast.show({
             message: 'Please complete the field!',
             theme: 'dark',
@@ -35,12 +43,11 @@ async function handleSendForm(evt) {
             color: '#EF4040',
             position: 'topRight',
         });
-    } else if (newInput !== input) {
-        page = 1;
-        input = newInput;
-    } else {
-        page += 1
     }
+}
+
+
+async function handleSubmit() {
     try {
         const photoFromPixabay = await fetchPhotoFromPixabay();
         renderPhotos(photoFromPixabay.hits);
@@ -61,7 +68,7 @@ async function handleSendForm(evt) {
         form.reset();
     }
 }
-window.onload = handleLoad;
+
 async function handleNextPage() {
     if (page > totalPages) {
         return iziToast.error({
@@ -71,8 +78,10 @@ async function handleNextPage() {
             position: "topRight",
             message: "We're sorry, there are no more posts to load"
         });
+    } else {
+        page += 1;
+        await handleSubmit();
     }
-    await handleSendForm();
 }
 
 export function showElement(element){
