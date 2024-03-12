@@ -9,7 +9,6 @@ export async function fetchPhotoFromPixabay() {
     } else {
         inputValueForForm = input.trim().split(' ').join('+');
     }
-    console.log(inputValueForForm);
     const searchParams = new URLSearchParams({
         key: "42633759-4a44573e34755b4488adb4c1b",
         q: [inputValueForForm],
