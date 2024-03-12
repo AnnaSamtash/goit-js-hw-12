@@ -113,7 +113,7 @@ body {
   display: block;
   padding: 8px 16px;
   text-align: center;
-  margin: 20px auto;
+  margin: 20px 657px;
   border: none;
   border-radius: 8px;
   background-color: #4e75ff;
@@ -190,8 +190,8 @@ body {
   height: 48px;
   border-radius: 50%;
   position: relative;
-  display: block;
-  margin: 0 auto;
+  top: 0;
+  left: 670px;
   animation: rotate 1s linear infinite
 }
 

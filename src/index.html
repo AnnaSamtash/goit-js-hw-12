@@ -17,23 +17,24 @@
     <header></header>
 
     <main>
-      <form class="search-form">
-        <label
-          class="input-label-search-form visually-hidden"
-          for="search-input"
-        >
-          Search
-        </label>
-        <input
-          class="search-input-form"
-          type="text"
-          name="search"
-          id="search-input"
-          placeholder="Search images..."
-        />
-        <button class="btn-search-form" type="submit">Search</button>
-      </form>
-
+      <div class="form-container">
+        <form class="search-form">
+          <label
+            class="input-label-search-form visually-hidden"
+            for="search-input"
+          >
+            Search
+          </label>
+          <input
+            class="search-input-form"
+            type="text"
+            name="search"
+            id="search-input"
+            placeholder="Search images..."
+          />
+          <button class="btn-search-form" type="submit">Search</button>
+        </form>
+      </div>
       <ul class="gallery"></ul>
       <button class="next-page-btn" type="submit">Load more</button>
       <div class="loader"></div>

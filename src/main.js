@@ -21,6 +21,7 @@ export let page = 1;
 export let limit = 15;
 let totalPages = Number;
 export let input = '';
+
 window.onload = handleLoad;
 
 form.addEventListener('submit', handleSendForm);
@@ -29,13 +30,13 @@ nextPageBtn.addEventListener('click', handleNextPage);
 async function handleSendForm(evt) {
     evt.preventDefault();
     listOfPhotos.innerHTML = "";
-    showElement(preloader);
+    hideElement(nextPageBtn);
     const newInput = evt.target.elements.search.value.trim();
     if (newInput !== '' && newInput !== input) {
         page = 1;
         input = newInput;
         await handleSubmit();
-    } else  {
+    } else {
         return iziToast.show({
             message: 'Please complete the field!',
             theme: 'dark',
@@ -46,11 +47,17 @@ async function handleSendForm(evt) {
     }
 }
 
-
 async function handleSubmit() {
     try {
+        showElement(preloader);
         const photoFromPixabay = await fetchPhotoFromPixabay();
         renderPhotos(photoFromPixabay.hits);
+        const itemOfList = listOfPhotos.querySelector('.photos-list-item');
+        const domRect = itemOfList.getBoundingClientRect();
+        window.scrollBy({
+            top: domRect.height * 2,
+            behavior: "smooth",
+        });
         totalPages = Math.ceil(photoFromPixabay.totalHits / limit);
         showElement(nextPageBtn);
     } catch (error) {
@@ -71,6 +78,7 @@ async function handleSubmit() {
 
 async function handleNextPage() {
     if (page > totalPages) {
+        hideElement(nextPageBtn);
         return iziToast.error({
             theme: 'dark',
             progressBarColor: '#FFFFFF',
@@ -79,15 +87,16 @@ async function handleNextPage() {
             message: "We're sorry, there are no more posts to load"
         });
     } else {
-        page += 1;
+        ++page;
         await handleSubmit();
     }
 }
 
-export function showElement(element){
+function showElement(element) {
     element.classList.toggle('hidden');
     element.style.display = 'flex';
 };
+
 function hideElement(element) {
     element.classList.toggle('hidden');
     element.style.display = 'none';
