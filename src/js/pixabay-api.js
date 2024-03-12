@@ -5,9 +5,9 @@ import axios from "axios";
 export async function fetchPhotoFromPixabay() {
     let inputValueForForm;
     if (page === 1) {
-        inputValueForForm = inputSearch.value.trim().split(',').join('+');  
+        inputValueForForm = inputSearch.value.trim().split(' ').join('+');  
     } else {
-        inputValueForForm = input.trim().split(',').join('+');
+        inputValueForForm = input.trim().split(' ').join('+');
     }
     console.log(inputValueForForm);
     const searchParams = new URLSearchParams({

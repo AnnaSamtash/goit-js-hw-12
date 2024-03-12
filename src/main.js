@@ -15,7 +15,7 @@ export const lightbox = new SimpleLightbox('.gallery a', {
     captionsData: 'alt',
     captionDelay: 250
 });
-export const preloader = document.querySelector('.loader');
+const preloader = document.querySelector('.loader');
 hideElement(preloader);
 export let page = 1;
 export let limit = 15;
@@ -106,6 +106,4 @@ function handleLoad() {
     document.body.classList.add('loaded');
     document.body.classList.remove('loaded_hiding');
 };
-
-
 
