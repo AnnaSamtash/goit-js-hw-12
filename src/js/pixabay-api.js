@@ -1,15 +1,13 @@
-import { form } from '../main';
+import { form, page, input } from '../main';
 import axios from "axios";
 
 export let limit = 15;
-export let page = 1;
-export let input = '';
 
 export async function fetchPhotoFromPixabay() {
     let inputValueForForm;
     if (page === 1) {
         const inputSearch = form.elements.search;
-        inputValueForForm = inputSearch.value.trim().split(' ').join('+');  
+        inputValueForForm = inputSearch.value.trim().split(' ').join('+');
     } else {
         inputValueForForm = input.trim().split(' ').join('+');
     }
@@ -19,9 +17,9 @@ export async function fetchPhotoFromPixabay() {
         image_type: "photo",
         orientation: "horizontal",
         safesearch: true,
-        page: [page], 
+        page: [page],
         per_page: [limit]
     });
     const response = await axios.get(`https://pixabay.com/api/?${searchParams}`);
-        return response.data;
+    return response.data;
 }
