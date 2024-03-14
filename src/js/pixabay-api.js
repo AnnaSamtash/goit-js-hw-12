@@ -1,10 +1,14 @@
-
-import { inputSearch, page, limit, input } from '../main';
+import { form } from '../main';
 import axios from "axios";
+
+export let limit = 15;
+export let page = 1;
+export let input = '';
 
 export async function fetchPhotoFromPixabay() {
     let inputValueForForm;
     if (page === 1) {
+        const inputSearch = form.elements.search;
         inputValueForForm = inputSearch.value.trim().split(' ').join('+');  
     } else {
         inputValueForForm = input.trim().split(' ').join('+');

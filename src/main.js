@@ -1,41 +1,30 @@
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
+
 import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
-import { fetchPhotoFromPixabay } from './js/pixabay-api';
-import { renderPhotos } from './js/render-functions';
+import { fetchPhotoFromPixabay, limit, page, input } from './js/pixabay-api';
+import { renderPhotos, listOfPhotos } from './js/render-functions';
 
+export const form = document.querySelector('.search-form');
 
-const form = document.querySelector('.search-form');
-export const inputSearch = form.elements.search;
 const nextPageBtn = document.querySelector('.next-page-btn');
 hideElement(nextPageBtn);
-export const listOfPhotos = document.querySelector('.gallery');
-export const lightbox = new SimpleLightbox('.gallery a', {
-    captionsData: 'alt',
-    captionDelay: 250
-});
 const preloader = document.querySelector('.loader');
 hideElement(preloader);
-export let page = 1;
-export let limit = 15;
-let totalPages = Number;
-export let input = '';
+let totalPages = 1;
 
 window.onload = handleLoad;
 
 form.addEventListener('submit', handleSendForm);
 nextPageBtn.addEventListener('click', handleNextPage);
 
-async function handleSendForm(evt) {
+function handleSendForm(evt) {
     evt.preventDefault();
     listOfPhotos.innerHTML = "";
-    hideElement(nextPageBtn);
     const newInput = evt.target.elements.search.value.trim();
-    if (newInput !== '' && newInput !== input) {
+    if (newInput !== '') {
         page = 1;
         input = newInput;
-        await handleSubmit();
+        handleSubmit();
     } else {
         return iziToast.show({
             message: 'Please complete the field!',
@@ -49,21 +38,32 @@ async function handleSendForm(evt) {
 
 async function handleSubmit() {
     try {
+        hideElement(nextPageBtn);
         showElement(preloader);
-        const photoFromPixabay = await fetchPhotoFromPixabay();
-        renderPhotos(photoFromPixabay.hits);
-        const itemOfList = listOfPhotos.querySelector('.photos-list-item');
-        const domRect = itemOfList.getBoundingClientRect();
-        window.scrollBy({
-            top: domRect.height * 2,
-            behavior: "smooth",
-        });
-        totalPages = Math.ceil(photoFromPixabay.totalHits / limit);
-        showElement(nextPageBtn);
+        if (page > totalPages) {
+            return iziToast.error({
+                theme: 'dark',
+                progressBarColor: '#FFFFFF',
+                color: '#EF4040',
+                position: "topRight",
+                message: "We're sorry, there are no more posts to load"
+            });
+        } else {
+            const photoFromPixabay = await fetchPhotoFromPixabay();
+            totalPages = Math.floor(photoFromPixabay.totalHits / limit);
+            renderPhotos(photoFromPixabay.hits);
+            const itemOfList = listOfPhotos.querySelector('.photos-list-item');
+            const domRect = itemOfList.getBoundingClientRect();
+            window.scrollBy({
+                top: domRect.height * 2,
+                behavior: "smooth",
+            });
+                showElement(nextPageBtn);
+        }
     } catch (error) {
-        console.log(error);
+        console.log(error.name);
         iziToast.error({
-            message: 'Sorry, an error occurred while loading. Please try again!',
+            message: `${error.message}`,
             theme: 'dark',
             progressBarColor: '#FFFFFF',
             color: '#EF4040',
@@ -76,21 +76,13 @@ async function handleSubmit() {
     }
 }
 
-async function handleNextPage() {
-    if (page > totalPages) {
-        hideElement(nextPageBtn);
-        return iziToast.error({
-            theme: 'dark',
-            progressBarColor: '#FFFFFF',
-            color: '#EF4040',
-            position: "topRight",
-            message: "We're sorry, there are no more posts to load"
-        });
-    } else {
+function handleNextPage() {
+    if (page < totalPages) {
         ++page;
-        await handleSubmit();
+        handleSubmit();    
     }
-}
+};
+
 
 function showElement(element) {
     element.classList.toggle('hidden');
