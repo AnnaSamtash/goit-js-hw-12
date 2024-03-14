@@ -41,18 +41,27 @@ async function handleSubmit() {
         hideElement(nextPageBtn);
         showElement(preloader);
         if (page > totalPages) {
-            return iziToast.error({
+            iziToast.error({
                 theme: 'dark',
                 progressBarColor: '#FFFFFF',
                 color: '#EF4040',
                 position: "topRight",
-                message: "We're sorry, there are no more posts to load"
+                message: "We're sorry, there are no more images to load"
             });
         } else {
             const photoFromPixabay = await fetchPhotoFromPixabay();
-            totalPages = Math.floor(photoFromPixabay.totalHits / limit);
-            if (photoFromPixabay.hits.length == 0) {
-                return iziToast.error({
+            if (photoFromPixabay.totalHits != 0) {
+                totalPages = Math.floor(photoFromPixabay.totalHits / limit);
+                renderPhotos(photoFromPixabay.hits);
+                const itemOfList = listOfPhotos.querySelector('.photos-list-item');
+                const domRect = itemOfList.getBoundingClientRect();
+                window.scrollBy({
+                    top: domRect.height * 2,
+                    behavior: "smooth",
+                });
+                showElement(nextPageBtn);
+            } else {
+                iziToast.error({
                     message: 'Sorry, there are no images matching your search query. Please try again!',
                     theme: 'dark',
                     progressBarColor: '#FFFFFF',
@@ -60,14 +69,6 @@ async function handleSubmit() {
                     position: 'topRight',
                 });
             }
-            renderPhotos(photoFromPixabay.hits);
-            const itemOfList = listOfPhotos.querySelector('.photos-list-item');
-            const domRect = itemOfList.getBoundingClientRect();
-            window.scrollBy({
-                top: domRect.height * 2,
-                behavior: "smooth",
-            });
-            showElement(nextPageBtn);
         }
     } catch (error) {
         console.log(error);
