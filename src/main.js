@@ -40,18 +40,10 @@ async function handleSubmit() {
     try {
         hideElement(nextPageBtn);
         showElement(preloader);
-        if (page > totalPages) {
-            iziToast.error({
-                theme: 'dark',
-                progressBarColor: '#FFFFFF',
-                color: '#EF4040',
-                position: "topRight",
-                message: "We're sorry, there are no more images to load"
-            });
-        } else {
+        if (page <= totalPages) {
             const photoFromPixabay = await fetchPhotoFromPixabay();
             if (photoFromPixabay.totalHits != 0) {
-                totalPages = Math.floor(photoFromPixabay.totalHits / limit);
+                totalPages = Math.ceil(photoFromPixabay.totalHits / limit);
                 renderPhotos(photoFromPixabay.hits);
                 const itemOfList = listOfPhotos.querySelector('.photos-list-item');
                 const domRect = itemOfList.getBoundingClientRect();
@@ -59,7 +51,17 @@ async function handleSubmit() {
                     top: domRect.height * 2,
                     behavior: "smooth",
                 });
-                showElement(nextPageBtn);
+                if (page < totalPages) {
+                    showElement(nextPageBtn);
+                }
+                else {
+                    iziToast.info({
+                        theme: 'dark',
+                        progressBarColor: '#FFFFFF',
+                        position: "topRight",
+                        message: "We're sorry, there are no more images to load"
+                    });
+                }
             } else {
                 iziToast.error({
                     message: 'Sorry, there are no images matching your search query. Please try again!',
